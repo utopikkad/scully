@@ -77,10 +77,19 @@ async function wrap(type: string, name: string, plugin: (...args) => any | FileP
     id += args[1].route;
   }
   if (type === 'fileHandler') {
-    plugin;
+    // plugin;
   }
   performance.mark('start' + id);
-  const result = await plugin(...args);
+  let result;
+  try {
+    result = await plugin(...args);
+  } catch (e) {
+    logError(`
+---------------------------------------
+  Error executing plugin "${yellow(name)}"
+---------------------------------------`);
+    console.error(e);
+  }
   performance.mark('stop' + id);
   performanceIds.add(id);
   return result;
